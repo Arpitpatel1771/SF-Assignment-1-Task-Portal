@@ -6,7 +6,7 @@
         }
         public function login($uname,$upass){
             try {
-                $stmt = $this->db->prepare("SELECT * FROM login WHERE username=?");
+                $stmt = $this->dbase->prepare("SELECT * FROM login WHERE username=?");
                 $stmt->execute(array($uname));
                 $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
                 if($stmt->rowCount() > 0) {
@@ -14,33 +14,36 @@
                         $_SESSION['tasma_username'] = $userRow['username'];
                         echo 'logged in';
                     } else {
-                        echo 'no data found';
+                        echo 'pwd doesnt match';
                     }
+                }else{
+                    echo 'usrname not found';
                 }
             }catch(PDOException $e){
                 echo $e->getMessage();
             }
         }
         public function is_loggedin(){
-            if(isset($_SESSION['user_session'])) {
+            if(isset($_SESSION['tasma_username'])) {
                 return true;
             }
         }
         public function logout(){
             session_destroy();
-            unset($_SESSION['user_session']);
-            echo 'user is logged out';
+            unset($_SESSION['tasma_username']);
+            return true;
         }
-        public function isstudent($uname){
+        public function isstudent(){
             try {
-                $stmt = $this->db->prepare("SELECT * FROM login WHERE username=?");
+                $uname = $_SESSION['tasma_username'];
+                $stmt = $this->dbase->prepare("SELECT * FROM login WHERE username=?");
                 $stmt->execute(array($uname));
                 $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
                 if($stmt->rowCount() > 0) {
                     if($userRow['student']) {
-                        echo 'user is student';
+                        return true;
                     } else {
-                        echo 'user is not student';
+                        return false;
                     }
                 }
             }catch(PDOException $e){

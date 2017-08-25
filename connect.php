@@ -14,4 +14,5 @@
         die('Oops! Something went wrong! Try refreshing the page :(');
     }
     require_once 'class.user.php';
+    $user = new USER($dbcon);
 ?>
